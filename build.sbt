@@ -18,10 +18,10 @@ lazy val root = project
     ),
 
     libraryDependencies ++= Seq(
-      ("com.storm-enroute" %% "scalameter" % "0.20").withDottyCompat(scalaVersion.value)
+      ("com.storm-enroute" %% "scalameter" % "0.20").withDottyCompat(scalaVersion.value),
 
       // .excludeAll(ExclusionRule(organization="com.trueaccord.scalapb")
-      //("com.lihaoyi" %% "pprint" % "0.5.6").withDottyCompat(scalaVersion.value),
+      ("com.lihaoyi" %% "pprint" % "0.5.6").withDottyCompat(scalaVersion.value),
       //("io.getquill" %% "quill-core-portable" % "minor_quat_fixes_3-SNAPSHOT").withDottyCompat(scalaVersion.value),
       //("io.getquill" %% "quill-sql-portable" % "minor_quat_fixes_3-SNAPSHOT").withDottyCompat(scalaVersion.value),
       ////("org.scalameta" %% "scalafmt-dynamic" % "2.7.4").withDottyCompat(scalaVersion.value),

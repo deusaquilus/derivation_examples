@@ -46,14 +46,21 @@ object DerivedSub {
 }
 
 object MainSub {
-  import Util._
+  case class Name(first: String, last: String)
+  case class Person(name: Name, age: Int)
+
+  def main(args: Array[String]): Unit = {
+    val p = Person(Name("Joe", "Bloggs"), 123)
+    println(pprint.apply(toMap(p)))
+  }
+  
+
+  def toMap(p: Person) =
+    Map("name" -> Map("first" -> p.name.first, "last" -> p.name.last), "age" -> p.age)
 
   def reflectCaseClassFields[T <: Product](p: T) = {
     val fieldNames = p.getClass.getDeclaredFields.map(_.getName).toSet
     p.getClass.getDeclaredMethods.filter(m => fieldNames.contains(m.getName)).toList
-  }
-
-  def main(args: Array[String]): Unit = {
   }
 
   def funDerive() = {
