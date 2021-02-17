@@ -16,7 +16,7 @@ object Util {
   case class Person(firstName: String, lastName: String, age: Int)
 
   def reflectCaseClassFields[T <: Product](p: T) = {
-    val fieldNames = p.getClass.getDeclaredFields.map(_.getName).toSet
+    val fieldNames = p.getClass.getDeclaredFields.map(_.getName)
     p.getClass.getDeclaredMethods.filter(m => fieldNames.contains(m.getName)).toList
   }
 }
@@ -60,6 +60,7 @@ object DerivedNaive {
   }
 }
 
+
 object Derived {
   trait WriteToMap[T]:
     def writeToMap(map: mutable.Map[String, Any])(key: String, value: T): Unit
@@ -91,98 +92,34 @@ object Main {
   import Util._
 
   def main(args: Array[String]): Unit = {
-    println("=============Using Reflection=============")
-    funA()
-    println("=============Using Manual=============")
-    funB()
-    println("=============Using Macros=============")
-    funMac()
   }
 
-  def funDerive() = {
-
-  }
-
-  def funMac() = {
+  def useMacro() = {
     val p = Person("Joe", "Bloggs", 123)
+    val map = mutable.Map[String, Any]()
+    PopulateMap.populateMap(p, map)
+  }
 
-    val numTests = 100000
-    val numTestsSkip = 0
-    var totalTime: Long = 0
-    
-    // just a variable to do something with that value of the map so compiler won't get rid of it
-    var dummy: Long = 0
-
-    for (i <- (1 to numTests + numTestsSkip)) {
-      val map = mutable.Map[String, Any]() //.sizeHint(fields, 0)
-      var start: Long = System.currentTimeMillis();
-
-      MacUtil.populateMap(p, map)
-
-      if (i > numTestsSkip) {
-        totalTime = totalTime + (System.currentTimeMillis - start);
-        if (i % 10000 == 0) {
-          println(s"Average Time: ${(totalTime * 1000000).toDouble/(i - numTestsSkip).toDouble} - test: ${i} - total time: ${totalTime}")
-          dummy += map.size
-        }
-      }
-    }
+  def useFunMacro() = {
+    val p = Person("Joe", "Bloggs", 123)
+    val map = PopulateMapFun.populateMap(p)
   }
 
   def funB() = {
     val p = Person("Joe", "Bloggs", 123)
 
-    val numTests = 100000
-    val numTestsSkip = 0
-    var totalTime: Long = 0
-    
-    // just a variable to do something with that value of the map so compiler won't get rid of it
-    var dummy: Long = 0
-
-    for (i <- (1 to numTests + numTestsSkip)) {
-      val map = mutable.Map[String, Any]() //.sizeHint(fields, 0)
-      var start: Long = System.currentTimeMillis();
-
-      map.put("firstName",  p.firstName)
-      map.put("lastName",  p.lastName)
-      map.put("age",  p.age)
-
-      if (i > numTestsSkip) {
-        totalTime = totalTime + (System.currentTimeMillis - start);
-        if (i % 10000 == 0) {
-          println(s"Average Time: ${(totalTime * 1000000).toDouble/(i - numTestsSkip).toDouble} - test: ${i} - total time: ${totalTime}")
-          dummy += map.size
-        }
-      }
-    }
+    val map = mutable.Map[String, Any]()
+    map.put("firstName",  p.firstName)
+    map.put("lastName",  p.lastName)
+    map.put("age",  p.age)
   }
 
   def funA() = {
     val p = Person("Joe", "Bloggs", 123)
     val fields = reflectCaseClassFields(p)
-
-    val numTests = 100000
-    val numTestsSkip = 0
-    var totalTime: Long = 0
-    
-    // just a variable to do something with that value of the map so compiler won't get rid of it
-    var dummy: Long = 0
-
-    for (i <- (1 to numTests + numTestsSkip)) {
-      val map = mutable.Map[String, Any]() //.sizeHint(fields, 0)
-      var start: Long = System.currentTimeMillis();
-
-      for (field <- fields) {
-        map.put(field.getName,  field.invoke(p))
-      }
-      if (i > numTestsSkip) {
-        totalTime = totalTime + (System.currentTimeMillis() - start);
-        if (i % 10000 == 0) {
-          println(s"Average Time: ${(totalTime * 1000000).toDouble/(i - numTestsSkip).toDouble} - test: ${i} - total time: ${totalTime}")
-          dummy += map.size
-        }
-      }
-    }
+    val map = mutable.Map[String, Any]()
+    for (field <- fields)
+      map.put(field.getName,  field.invoke(p))
   }
 }
 
