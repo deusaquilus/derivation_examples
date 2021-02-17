@@ -44,7 +44,7 @@ object RangeBenchmarkA extends Bench[Double] with BenchBase {
     using(oneGen).config(opts) in { v =>
       val map = mutable.Map[String, Any]()
       for (field <- fieldsPre) {
-        map.put(field.getName,  field.invoke(p)) // 0.0002 ms
+        map.put(field.getName,  field.invoke(p)) // 0.000123
       }
       d = d + map.size.toDouble
     }
@@ -61,6 +61,16 @@ object RangeBenchmarkB extends Bench[Double] with BenchBase {
       for (field <- fieldsPre) {
         map.put(field.getName,  field.invoke(p)) // 0.001169 ms
       }
+    }
+  }
+}
+
+object RangeBenchmarkReflectFields extends Bench[Double] with BenchBase {
+  import Util._
+
+  measure method "Using Reflection" in {
+    using(oneGen).config(opts) in { v =>
+      reflectCaseClassFields(p) // 0.001141 ms
     }
   }
 }
@@ -86,5 +96,37 @@ object RangeBenchmarkD extends Bench[Double] with BenchBase {
       val map = mutable.Map[String, Any]()
       MacUtil.populateMap(p, map) // 0.000096 ms
     }
+  }
+}
+
+
+object RangeBenchmarkFunctionalJustLoadMap extends Bench[Double] with BenchBase {
+  import Util._
+  val l = List[(String, Any)]("firstName" -> "Joe", "lastName" -> "Bloggs", "age" -> 123)
+
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      l.foldLeft(Map[String, Any]())((map, pair) => map + pair) // 0.000161 ms
+    }
+  }
+}
+
+object RangeBenchmarkFunctionalWithReflect extends Bench[Double] with BenchBase {
+  import Util._
+  val fields = reflectCaseClassFields(p)
+
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      fields.foldLeft(Map[String, Any]())(
+        (map, field) => map + ((field.getName, field.invoke(p))) // 0.000181
+      )
+    }
+  }
+}
+
+object RangeBenchmarkJustLoadTest {
+  def main(args: Array[String]): Unit = {
+    val l = List[(String, Any)]("firstName" -> "Joe", "lastName" -> "Bloggs", "age" -> 123)
+    println( l.foldLeft(Map[String, Any]())((map, pair) => map + pair) )
   }
 }
