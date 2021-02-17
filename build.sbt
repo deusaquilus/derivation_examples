@@ -1,3 +1,5 @@
+lazy val Benchmark = config("bench") extend Test
+
 lazy val root = project
   .in(file("."))
   .settings(
@@ -5,6 +7,7 @@ lazy val root = project
     version := "0.1.0",
     resolvers ++= Seq(
       Resolver.mavenLocal,
+      "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases",
       "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
     ),
 
@@ -15,6 +18,8 @@ lazy val root = project
     ),
 
     libraryDependencies ++= Seq(
+      ("com.storm-enroute" %% "scalameter" % "0.20").withDottyCompat(scalaVersion.value)
+
       // .excludeAll(ExclusionRule(organization="com.trueaccord.scalapb")
       //("com.lihaoyi" %% "pprint" % "0.5.6").withDottyCompat(scalaVersion.value),
       //("io.getquill" %% "quill-core-portable" % "minor_quat_fixes_3-SNAPSHOT").withDottyCompat(scalaVersion.value),
@@ -25,5 +30,11 @@ lazy val root = project
 
       //"org.scalatest" % "scalatest_3.0.0-M3" % "3.2.3" % "test",
       //"org.scalatest" % "scalatest-mustmatchers_3.0.0-M3" % "3.2.3" % "test"
-    )
+    ),
+
+    testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework"),
+    parallelExecution in Benchmark := false,
+    logBuffered := false
   )
+  .configs(Benchmark).settings(inConfig(Benchmark)(Defaults.testSettings): _*
+)

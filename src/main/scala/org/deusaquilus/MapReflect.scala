@@ -14,6 +14,11 @@ object Util {
   def rand() = scala.util.Random.nextInt()
 
   case class Person(firstName: String, lastName: String, age: Int)
+
+  def reflectCaseClassFields[T <: Product](p: T) = {
+    val fieldNames = p.getClass.getDeclaredFields.map(_.getName).toSet
+    p.getClass.getDeclaredMethods.filter(m => fieldNames.contains(m.getName)).toList
+  }
 }
 
 object DerivedNaive {
@@ -84,11 +89,6 @@ object Derived {
 
 object Main {
   import Util._
-
-  def reflectCaseClassFields[T <: Product](p: T) = {
-    val fieldNames = p.getClass.getDeclaredFields.map(_.getName).toSet
-    p.getClass.getDeclaredMethods.filter(m => fieldNames.contains(m.getName)).toList
-  }
 
   def main(args: Array[String]): Unit = {
     println("=============Using Reflection=============")
