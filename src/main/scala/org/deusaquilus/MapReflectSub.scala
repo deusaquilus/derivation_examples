@@ -46,22 +46,56 @@ object DerivedSub {
 }
 
 object MainSub {
-  case class Name(first: String, last: String)
-  case class Person(name: Name, age: Int)
+  
+
+  def simpleSub(): Unit = {
+    case class Name(first: String, last: String)
+    case class Person(name: Name, age: Int)
+    val p = Person(Name("Joe", "Bloggs"), 123)
+    val map = mutable.Map[String, Any]()
+
+    def toMapManual(p: Person) =
+      Map("name" -> Map("first" -> p.name.first, "last" -> p.name.last), "age" -> p.age)
+
+    PopulateSubMaps.populateMap(p, map)
+    println(pprint(map))
+    //println(pprint.apply(toMap(p)))
+    
+  }
+
+  def polyDefSub(): Unit = {
+    trait Name
+    case class SimpleName(first: String, last: String) extends Name
+    case class Title(first: String, middle: String, last: String) extends Name
+    case class Person(name: Name, age: Int)
+  }
+
+  def userDefSub(): Unit = {
+    case class Name(first: String, last: String)
+    case class ConvertableAge(value: Int) {
+      def numDecades = value/10
+    }
+    case class Person(name: Name, age: ConvertableAge)
+
+    val p = Person(Name("Joe", "Bloggs"), ConvertableAge(123))
+    val map = mutable.Map[String, Any]()
+    PopulateSubMaps.populateMap(p, map)
+
+    println(pprint(map))
+    //println(pprint.apply(toMap(p)))
+
+    Map(
+      "name" -> Map("last" -> "Bloggs", "first" -> "Joe"), 
+      "age" -> Map("value" -> 123)
+    )
+  }
 
   def main(args: Array[String]): Unit = {
-    val p = Person(Name("Joe", "Bloggs"), 123)
-    println(pprint.apply(toMap(p)))
+    userDefSub()
   }
   
 
-  def toMap(p: Person) =
-    Map("name" -> Map("first" -> p.name.first, "last" -> p.name.last), "age" -> p.age)
-
-  def reflectCaseClassFields[T <: Product](p: T) = {
-    val fieldNames = p.getClass.getDeclaredFields.map(_.getName).toSet
-    p.getClass.getDeclaredMethods.filter(m => fieldNames.contains(m.getName)).toList
-  }
+  
 
   def funDerive() = {
 

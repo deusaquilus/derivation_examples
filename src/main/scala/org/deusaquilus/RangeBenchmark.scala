@@ -24,10 +24,6 @@ trait BenchBase {
     size <- sizes
   } yield 0 until size
 
-  import Util._
-  val p = Person("Joe", "Bloggs", 123)
-  val fieldsPre = reflectCaseClassFields(p)
-
   val opts = 
     new org.scalameter.japi.ContextBuilder()
       .put("exec.minWarmupRuns", 500)
@@ -132,6 +128,65 @@ object RangeBenchmarkFunctionalWithReflect extends Bench[Double] with BenchBase 
     }
   }
 }
+
+object RangeBenchmarkNestedObjectMapManual extends Bench[Double] with BenchBase {
+  case class Name(first: String, last: String)
+  case class Person(name: Name, age: Int)
+  val p = Person(Name("Joe", "Bloggs"), 123)
+
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+    val map = mutable.Map[String, Any]()
+    val nameMap = mutable.Map[String, Any]()
+    nameMap.put("first", p.name.first)
+    nameMap.put("last", p.name.last)
+    map.put("name", nameMap)
+    map.put("age", p.age)
+    } // 0.000156 ms
+  }
+}
+
+
+object RangeBenchmarkNestedObjectMap extends Bench[Double] with BenchBase {
+  case class Name(first: String, last: String)
+  case class Person(name: Name, age: Int)
+  val p = Person(Name("Joe", "Bloggs"), 123)
+
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      val map = mutable.Map[String, Any]()
+      PopulateSubMaps.populateMap(p, map)
+    }
+  } // 0.000157
+}
+
+
+object RangeBenchmarkDerived extends Bench[Double] with BenchBase {
+  import Derived._
+  import WriteToMapOps._
+  case class Person(firstName: String, lastName: String, age: Int) derives WriteToMap
+  val p = Person("Joe", "Bloggs", 123)
+
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      p.writeToMap
+    }
+  } // 0.000103 ms
+}
+
+object RangeBenchmarkDerivedNaive extends Bench[Double] with BenchBase {
+  import DerivedNaive._
+  import WriteToMapOps._
+  case class Person(firstName: String, lastName: String, age: Int) derives WriteToMap
+  val p = Person("Joe", "Bloggs", 123)
+
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      p.writeToMap
+    }
+  } // 0.000214
+}
+
 
 object RangeBenchmarkJustLoadTest {
   def main(args: Array[String]): Unit = {
