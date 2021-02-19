@@ -174,6 +174,39 @@ object RangeBenchmarkDerived extends Bench[Double] with BenchBase {
   } // 0.000103 ms
 }
 
+object RangeBenchmarkDerivedLong extends Bench[Double] with BenchBase {
+  import Derived._
+  import WriteToMapOps._
+
+  given writeLong: WriteToMap[Long] with
+    def writeToMap(map: mutable.Map[String, Any])(key: String, value: Long): Unit = map.put(key, value)
+
+  case class Person(firstName: String, lastName: String, age: Long) derives WriteToMap
+  val q = Person("Q", "Q", 4000000000L)
+
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      q.writeToMap
+    }
+  } // 0.000104 ms
+}
+
+object RangeBenchmarkMirrorSummon extends Bench[Double] with BenchBase {
+  import DerivedMirrorSummon._
+  import WriteToMapOps._
+
+  inline given writeArbitraryToMap[T]: WriteToMap[T] = WriteToMap.derived
+  case class Person(firstName: String, lastName: String, age: Int)
+  val p = Person("Joe", "Bloggs", 123)
+
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      
+      p.writeToMap
+    }
+  } // 
+}
+
 object RangeBenchmarkDerivedNaive extends Bench[Double] with BenchBase {
   import DerivedNaive._
   import WriteToMapOps._
