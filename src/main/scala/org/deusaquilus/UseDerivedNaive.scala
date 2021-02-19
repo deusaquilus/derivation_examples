@@ -11,8 +11,11 @@ object UseDerivedNaive {
   }
 
   def personSimpleCase(): Unit = {
-    case class Person(firstName: String, lastName: String, age: Int) derives WriteToMap
-    val p = Person("Joe", "Bloggs", 123)
+  case class Person(firstName: String, lastName: String, age: Int) derives WriteToMap
+  val p = Person("Joe", "Bloggs", 123)
+  PrintMac(p.writeToMap) //hello
+  val map = p.writeToMap
+
     println(p.writeToMap.toMap)
   }
 }
