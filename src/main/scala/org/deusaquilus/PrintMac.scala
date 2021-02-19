@@ -10,3 +10,12 @@ object PrintMac {
     '{ () }
   }
 }
+
+object PrintMacPass {
+  inline def apply[T](inline any: T): T = ${ printMacImpl('any) }
+  def printMacImpl[T: Type](any: Expr[T])(using qctx: Quotes): Expr[T] = {
+    import qctx.reflect._
+    println(Printer.TreeShortCode.show(any.asTerm))
+    any
+  }
+}

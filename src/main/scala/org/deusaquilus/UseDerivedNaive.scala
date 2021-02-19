@@ -2,6 +2,9 @@ package org.deusaquilus
 
 import scala.collection.mutable
 
+
+
+
 object UseDerivedNaive {
   import DerivedNaive._
   import WriteToMapOps._
@@ -11,10 +14,10 @@ object UseDerivedNaive {
   }
 
   def personSimpleCase(): Unit = {
-  case class Person(firstName: String, lastName: String, age: Int) derives WriteToMap
-  val p = Person("Joe", "Bloggs", 123)
-  PrintMac(p.writeToMap) //hello
-  val map = p.writeToMap
+    case class Person(firstName: String, lastName: String, age: Int) derives WriteToMap
+    val p = Person("Joe", "Bloggs", 123)
+    PrintMac(p.writeToMap) //helloooo
+    val map = p.writeToMap
 
     println(p.writeToMap.toMap)
   }

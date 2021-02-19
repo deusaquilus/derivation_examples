@@ -43,13 +43,14 @@ object Derived {
         case (_: EmptyTuple, _) =>
           // Ignore
 
-    inline def derived[T](using mir: Mirror.Of[T]) = new WriteToMap[T] {
+    // Uncomment PrintMacPass to print contents of this macro on a recompile
+    inline def derived[T](using mir: Mirror.Of[T]) = /*PrintMacPass*/(new WriteToMap[T] {
       def writeToMap(map: mutable.Map[String, Any])(key: String, value: T): Unit =
         inline mir match
           case proMir: Mirror.ProductOf[T] =>
             recurse[proMir.MirroredElemLabels, proMir.MirroredElemTypes](value.asInstanceOf[Product], map)(0)
           case _ =>
             throw new IllegalArgumentException(s"No mirror found for ${value}")
-    }
+    })
   }
 }

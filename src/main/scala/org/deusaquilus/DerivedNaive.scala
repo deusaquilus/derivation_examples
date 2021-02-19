@@ -42,7 +42,8 @@ object DerivedNaive {
         case _: EmptyTuple =>
           Nil
 
-    inline def derived[T](using mir: Mirror.Of[T]) = new WriteToMap[T] {
+    // Uncomment PrintMacPass to print contents of this macro on a recompile
+    inline def derived[T](using mir: Mirror.Of[T]) = /*PrintMacPass*/(new WriteToMap[T] { //hello
       def writeToMap(map: mutable.Map[String, Any])(key: String, value: T): Unit =
         inline mir match
           case proMir: Mirror.ProductOf[T] =>
@@ -55,7 +56,7 @@ object DerivedNaive {
             }
           case _ =>
             throw new IllegalArgumentException(s"No mirror found for ${value}")
-    }
+    })
   }
 
   extension (product: Any)
