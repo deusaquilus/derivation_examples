@@ -223,25 +223,50 @@ object RangeBenchmarkDerivedNaive extends Bench[Double] with BenchBase {
 object RangeUsingUnionLeafList extends Bench[Double] with BenchBase {
   import DerivedUsingUnion._
   import WriteToMapOps._
-  import UseDerivedUsingUnion._
-  import UseDerivedUsingUnion.CaseClassWithList._
+  import UseDerivedFlagControl._
+  import UseDerivedFlagControl.CaseClassWithList._
   measure method "Manual" in {
     using(oneGen).config(opts) in { v =>
       derivedWithListLeaf
     }
-  } // 0.000177
+  } // 0.000133
 }
 
 object RangeUsingUnionLeafListManual extends Bench[Double] with BenchBase {
   import DerivedUsingUnion._
   import WriteToMapOps._
-  import UseDerivedUsingUnion._
-  import UseDerivedUsingUnion.CaseClassWithList._
+  import UseDerivedFlagControl._
+  import UseDerivedFlagControl.CaseClassWithList._
   measure method "Manual" in {
     using(oneGen).config(opts) in { v =>
       derivedWithListLeafManual
     }
-  } // 0.000145
+  } // 0.000149
+}
+
+
+object RangeUsingUnionNodeList extends Bench[Double] with BenchBase {
+  import DerivedUsingUnion._
+  import WriteToMapOps._
+  import UseDerivedFlagControl._
+  import UseDerivedFlagControl.CaseClassWithList._
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      derivedWithListNode
+    }
+  } // 0.000290 ms
+}
+
+object RangeUsingUnionNodeListManual extends Bench[Double] with BenchBase {
+  import DerivedUsingUnion._
+  import WriteToMapOps._
+  import UseDerivedFlagControl._
+  import UseDerivedFlagControl.CaseClassWithList._
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      derivedWithListNodeManual
+    }
+  } // 0.000269 ms
 }
 
 
