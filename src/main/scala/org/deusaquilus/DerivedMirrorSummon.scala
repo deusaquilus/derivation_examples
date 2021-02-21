@@ -6,9 +6,6 @@ import scala.quoted._
 import scala.compiletime.{ summonFrom, erasedValue, summonInline, constValue }
 import scala.deriving._
 
-// extension [T](t: T)(using writeToMap: WriteToMap[T])
-//     def 
-
 object DerivedMirrorSummon {
 
   trait WriteToMap[T]:

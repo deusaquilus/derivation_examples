@@ -3,10 +3,8 @@ package org.deusaquilus
 import scala.collection.mutable
 
 object UseDerivedFlagControl {
-  import DerivedUsingUnion._
+  import DerivedFlagControl._
   import WriteToMapOps._
-
-  inline given writeArbitraryToMap[T]: WriteToMap[T] = WriteToMap.derived
 
   def main(args: Array[String]): Unit = {
     caseClassWithList()

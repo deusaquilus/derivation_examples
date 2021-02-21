@@ -6,7 +6,10 @@ import scala.quoted._
 import scala.compiletime.{ summonFrom, erasedValue, summonInline, constValue }
 import scala.deriving._
 
-object DerivedUsingUnion {
+object DerivedFlagControl {
+
+  inline given writeArbitraryToMap[T]: WriteToMap[T] = WriteToMap.derived
+
   sealed trait JustReturn
   object JustReturn extends JustReturn
 

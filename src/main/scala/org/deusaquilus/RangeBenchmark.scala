@@ -221,58 +221,153 @@ object RangeBenchmarkDerivedNaive extends Bench[Double] with BenchBase {
 }
 
 object RangeUsingUnionLeafList extends Bench[Double] with BenchBase {
-  import DerivedUsingUnion._
+  import DerivedFlagControl._
   import WriteToMapOps._
-  import UseDerivedFlagControl._
-  import UseDerivedFlagControl.CaseClassWithList._
+  
+  given writeList[T](using wtm: WriteToMap[T]): WriteToMap[List[T]] with
+    def writeToMap(map: mutable.Map[String, Any], justReturn: Boolean)(key: String, values: List[T]): Any =
+      val valueKeys = 
+        values.map(v =>
+          wtm.writeToMap(null, true)("k", v)
+        )
+      if (justReturn) valueKeys
+      else map.put(key, valueKeys); map
+
+  case class Person(firstName: String, lastName: String, nicknames: List[String])
+  val p = Person("Yosef", "Bloggs", List("Joseph", "Joe"))
+
   measure method "Manual" in {
     using(oneGen).config(opts) in { v =>
-      derivedWithListLeaf
+      p.writeToMap
     }
-  } // 0.000133
+  } // 
 }
-
-object RangeUsingUnionLeafListManual extends Bench[Double] with BenchBase {
-  import DerivedUsingUnion._
-  import WriteToMapOps._
-  import UseDerivedFlagControl._
-  import UseDerivedFlagControl.CaseClassWithList._
-  measure method "Manual" in {
-    using(oneGen).config(opts) in { v =>
-      derivedWithListLeafManual
-    }
-  } // 0.000149
-}
-
 
 object RangeUsingUnionNodeList extends Bench[Double] with BenchBase {
-  import DerivedUsingUnion._
+  import DerivedFlagControl._
   import WriteToMapOps._
-  import UseDerivedFlagControl._
-  import UseDerivedFlagControl.CaseClassWithList._
+  
+  given writeList[T](using wtm: WriteToMap[T]): WriteToMap[List[T]] with
+    def writeToMap(map: mutable.Map[String, Any], justReturn: Boolean)(key: String, values: List[T]): Any =
+      val valueKeys = 
+        values.map(v =>
+          wtm.writeToMap(null, true)("k", v)
+        )
+      if (justReturn) valueKeys
+      else map.put(key, valueKeys); map
+
+  case class Address(street: String, zip: Int)
+  case class Person(firstName: String, lastName: String, nicknames: List[Address])
+  val p = 
+    Person("Yosef", "Bloggs", List(
+      Address("123 Place", 11122), 
+      Address("456 Ave", 11122))
+    )
+
   measure method "Manual" in {
     using(oneGen).config(opts) in { v =>
-      derivedWithListNode
+      p.writeToMap
     }
-  } // 0.000290 ms
+  } // 0.000348 ms
 }
 
-object RangeUsingUnionNodeListManual extends Bench[Double] with BenchBase {
-  import DerivedUsingUnion._
+
+object RangeUsingUnionLeafListManual extends Bench[Double] with BenchBase {
+  import DerivedFlagControl._
+  import WriteToMapOps._
+
+  case class Person(firstName: String, lastName: String, nicknames: List[String])
+  val p = Person("Yosef", "Bloggs", List("Joseph", "Joe"))
+
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      val map = mutable.Map[String, Any]()
+      map.put("firstName", "Yosef")
+      map.put("lastName", "Bloggs")
+      map.put("nicknames", List("Joseph", "Joe"))
+      map
+    }
+  } // 0.000178 ms
+}
+
+object RangeUsingFlagControlNodeListManual extends Bench[Double] with BenchBase {
+  import DerivedFlagControl._
   import WriteToMapOps._
   import UseDerivedFlagControl._
   import UseDerivedFlagControl.CaseClassWithList._
+
+  case class Address(street: String, zip: Int)
+  case class Person(firstName: String, lastName: String, nicknames: List[Address])
+
   measure method "Manual" in {
     using(oneGen).config(opts) in { v =>
-      derivedWithListNodeManual
+      val map = mutable.Map[String, Any]()
+      map.put("firstName", "Yosef"); map.put("lastName", "Bloggs")
+
+      val map1 = mutable.Map[String, Any]()
+      map1.put("street", "123 Place"); map1.put("zip", 11122)
+      val map2 = mutable.Map[String, Any]()
+      map1.put("street", "456 Ave"); map1.put("zip", 11122)
+      map.put("addresses", List(map1, map2))
     }
-  } // 0.000269 ms
+  } // 0.000375ns
+}
+
+object RangeUsingImmutable extends Bench[Double] with BenchBase {
+  import DerivedImmutable._
+  import WriteToMapOps._
+  import UseDerivedImmutable._
+  case class Person(firstName: String, lastName: String, nicknames: List[String])
+  val p = Person("Yosef", "Bloggs", List("Joseph", "Joe"))  
+
+  var v = 0
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      p.writeToMap
+    }
+  } //  0.00089 ms00000
+  println(v)
+}
+
+object RangeUsingImmutableListLeaf extends Bench[Double] with BenchBase {
+  import DerivedImmutable._
+  import WriteToMapOps._
+  import UseDerivedImmutable._
+
+  measure method "Manual" in {
+    case class Person(firstName: String, lastName: String, nicknames: List[String])
+    val p = Person("Yosef", "Bloggs", List("Joseph", "Joe"))  
+
+    using(oneGen).config(opts) in { vv =>
+      p.writeToMap
+    }
+  } // 0.000090ns
+}
+
+object RangeUsingImmutableListNode extends Bench[Double] with BenchBase {
+  import DerivedImmutable._
+  import WriteToMapOps._
+  import UseDerivedImmutable._
+
+  case class Address(street: String, zip: Int)
+  case class Person(firstName: String, lastName: String, addresses: List[Address])
+  val p = 
+    Person("Yosef", "Bloggs", List(
+      Address("123 Place", 11122), 
+      Address("456 Ave", 11122))
+    )
+
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { vv => //hello
+      p.writeToMap
+    }
+  } //  0.000087 ns
 }
 
 
 object RangeBenchmarkJustLoadTest {
   def main(args: Array[String]): Unit = {
     val l = List[(String, Any)]("firstName" -> "Joe", "lastName" -> "Bloggs", "age" -> 123)
-    println( l.foldLeft(Map[String, Any]())((map, pair) => map + pair) )
+    println( l.foldLeft(Map[String, Any]())((map, pair) => map + pair) )//helloooooooooooooooo
   }
 }
