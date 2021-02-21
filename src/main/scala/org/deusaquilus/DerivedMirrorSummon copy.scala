@@ -45,30 +45,29 @@ object DerivedMirrorSummon {
           // Ignore
 
     
-    inline def derived[T] = {
-      summonFrom {
-        case mir: Mirror.Of[T] =>
-          inline mir match
-            case proMir: Mirror.ProductOf[T] =>
-              new WriteToMap[T] {
-                def writeToMap(map: mutable.Map[String, Any])(key: String, value: T): Unit =
-                  recurse[proMir.MirroredElemLabels, proMir.MirroredElemTypes](value.asInstanceOf[Product], map)(0)
-              }
-            case _ =>
-              throw new IllegalArgumentException(s"No mirror found for ${summonInline[Type[T]]}")
-      }
-    }
+    // inline def derived[T] = {
+    //   summonFrom {
+    //     case mir: Mirror.Of[T] =>
+    //       inline mir match
+    //         case proMir: Mirror.ProductOf[T] =>
+    //           new WriteToMap[T] {
+    //             def writeToMap(map: mutable.Map[String, Any])(key: String, value: T): Unit =
+    //               recurse[proMir.MirroredElemLabels, proMir.MirroredElemTypes](value.asInstanceOf[Product], map)(0)
+    //           }
+    //         case _ =>
+    //           throw new IllegalArgumentException(s"No mirror found for ${summonInline[Type[T]]}")
+    //   }
+    // }
 
-    // Uncomment PrintMacPass to print contents of this macro on a recompile
-    // inline def derived[T] =
-    //   inline summonInline[Mirror.ProductOf[T]] match
-    //     case proMir: Mirror.ProductOf[T] =>
-    //       new WriteToMap[T] {
-    //         def writeToMap(map: mutable.Map[String, Any])(key: String, value: T): Unit =
-    //           recurse[proMir.MirroredElemLabels, proMir.MirroredElemTypes](value.asInstanceOf[Product], map)(0)
-    //       }
-    //     case _ =>
-    //       throw new IllegalArgumentException(s"No mirror found for ${summonInline[Type[T]]}")
-    // 
+    inline given derived[T]: WriteToMap[T] =
+      inline summonInline[Mirror.ProductOf[T]] match
+        case proMir: Mirror.ProductOf[T] =>
+          new WriteToMap[T] {
+            def writeToMap(map: mutable.Map[String, Any])(key: String, value: T): Unit =
+              recurse[proMir.MirroredElemLabels, proMir.MirroredElemTypes](value.asInstanceOf[Product], map)(0)
+          }
+        case _ =>
+          throw new IllegalArgumentException(s"No mirror found for ${summonInline[Type[T]]}")
+    
   }
 }

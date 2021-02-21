@@ -220,6 +220,30 @@ object RangeBenchmarkDerivedNaive extends Bench[Double] with BenchBase {
   } // 0.000214
 }
 
+object RangeUsingUnionLeafList extends Bench[Double] with BenchBase {
+  import DerivedUsingUnion._
+  import WriteToMapOps._
+  import UseDerivedUsingUnion._
+  import UseDerivedUsingUnion.CaseClassWithList._
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      derivedWithListLeaf
+    }
+  } // 0.000177
+}
+
+object RangeUsingUnionLeafListManual extends Bench[Double] with BenchBase {
+  import DerivedUsingUnion._
+  import WriteToMapOps._
+  import UseDerivedUsingUnion._
+  import UseDerivedUsingUnion.CaseClassWithList._
+  measure method "Manual" in {
+    using(oneGen).config(opts) in { v =>
+      derivedWithListLeafManual
+    }
+  } // 0.000145
+}
+
 
 object RangeBenchmarkJustLoadTest {
   def main(args: Array[String]): Unit = {
