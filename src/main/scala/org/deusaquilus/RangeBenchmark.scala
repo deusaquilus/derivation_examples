@@ -357,10 +357,13 @@ object RangeUsingImmutableListNode extends Bench[Double] with BenchBase {
       Address("456 Ave", 11122))
     )
 
+  var v = false
   measure method "Manual" in {
     using(oneGen).config(opts) in { vv => //hello
-      p.writeToMap
+      val map = p.writeToMap
+      //v = map.values.find(v => v == "foo").isEmpty // Maybe it's lazy, this should for it to materialize
     }
+    println(v)
   } //  0.000087 ns
 }
 
