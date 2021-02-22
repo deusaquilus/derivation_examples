@@ -2,15 +2,27 @@ package org.deusaquilus
 
 import scala.collection.mutable
 
+// Works
+// sealed trait Name
+// object Name {
+//   case class Simple(first: String, last: String) extends Name
+// }
+
+// Works
+enum Name:
+  case Simple(first: String, last: String) extends Name
+  case Title(first: String, middle: String, last: String) extends Name
+
 object UseDerivedImmutable {
   import DerivedImmutable._
   import WriteToMapOps._
 
   def main(args: Array[String]): Unit = {
-    println(simpleCaseClassWithDerive)
-    println(derivedWithListLeaf)
-    println(derivedWithListNode)
-    println(derivedWithListAddr) //hellooooooooooo
+    //println(simpleCaseClassWithDerive)
+    // println(derivedWithListLeaf)
+    // println(derivedWithListNode)
+    // println(derivedWithListAddr)
+    deriveCoproduct()
   }
 
   def simpleCaseClassWithDerive = {
@@ -42,5 +54,23 @@ object UseDerivedImmutable {
     case class Person(firstName: String, lastName: String, addresses: Address)
     val p = Person("Yosef", "Bloggs", Address("123 Place", 11122))
     p.writeToMap
+  }
+
+  def deriveCoproduct() = {
+    // Inline enum blows up horribly (make sure to remove the summonInline[Type[T]] to see that)
+    // enum Name:
+    //   case Simple(first: String, last: String) extends Name
+    //   case Title(first: String, middle: String, last: String) extends Name
+
+    case class Person(name: Name, age: Int)
+    val p1 = Person(Name.Simple("Joe", "Bloggs"), 123)
+    //val n = Name.Simple("Joe", "Bloggs")
+
+    //given WriteToMap[Name] = WriteToMap.derived
+    
+    println(p1.writeToMap)
+
+    // val p2 = Person(Name.Title("Joe", "P.", "Bloggs"), 123)
+    // println(p1.writeToMap)
   }
 }
