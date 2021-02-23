@@ -32,22 +32,23 @@ trait BenchBase {
       .build()
 }
 
-object RangeBenchmarkA extends Bench[Double] with BenchBase {
+object BenchmarkReflectionNoFields extends Bench[Double] with BenchBase {
   import Util._
 
   measure method "Using Reflection No Fields" in {
-    var d: Double = 0
+    //var d: Double = 0
     using(oneGen).config(opts) in { v =>
       val map = mutable.Map[String, Any]()
       for (field <- fieldsPre) {
         map.put(field.getName,  field.invoke(p)) // 0.000123
       }
-      d = d + map.size.toDouble
+      // Just to force usage of the variable in case compiler is optimizing it out
+      //d = d + map.size.toDouble
     }
   }
 }
 
-object RangeBenchmarkB extends Bench[Double] with BenchBase {
+object BenchmarkReflectAndDeref extends Bench[Double] with BenchBase {
   import Util._
 
   measure method "Using Reflection" in {
@@ -61,7 +62,7 @@ object RangeBenchmarkB extends Bench[Double] with BenchBase {
   }
 }
 
-object RangeBenchmarkReflectFields extends Bench[Double] with BenchBase {
+object BenchmarkReflectFields extends Bench[Double] with BenchBase {
   import Util._
 
   measure method "Using Reflection" in {
@@ -71,7 +72,7 @@ object RangeBenchmarkReflectFields extends Bench[Double] with BenchBase {
   }
 }
 
-object RangeBenchmarkC extends Bench[Double] with BenchBase {
+object BenchmarkC extends Bench[Double] with BenchBase {
   import Util._
   measure method "Manual" in {
     using(oneGen).config(opts) in { v =>
@@ -85,7 +86,7 @@ object RangeBenchmarkC extends Bench[Double] with BenchBase {
 }
 
 
-object RangeBenchmarkMacro extends Bench[Double] with BenchBase {
+object BenchmarkMacro extends Bench[Double] with BenchBase {
   import Util._
   measure method "Manual" in {
     using(oneGen).config(opts) in { v =>
@@ -95,7 +96,7 @@ object RangeBenchmarkMacro extends Bench[Double] with BenchBase {
   }
 }
 
-object RangeBenchmarkFunMacro extends Bench[Double] with BenchBase {
+object BenchmarkFunMacro extends Bench[Double] with BenchBase {
   import Util._
   measure method "Manual" in {
     using(oneGen).config(opts) in { v =>
@@ -105,7 +106,7 @@ object RangeBenchmarkFunMacro extends Bench[Double] with BenchBase {
 }
 
 
-object RangeBenchmarkFunctionalJustLoadMap extends Bench[Double] with BenchBase {
+object BenchmarkFunctionalJustLoadMap extends Bench[Double] with BenchBase {
   import Util._
   val l = List[(String, Any)]("firstName" -> p.firstName, "lastName" -> p.lastName, "age" -> p.age)
 
@@ -116,7 +117,7 @@ object RangeBenchmarkFunctionalJustLoadMap extends Bench[Double] with BenchBase 
   }
 }
 
-object RangeBenchmarkFunctionalWithReflect extends Bench[Double] with BenchBase {
+object BenchmarkFunctionalWithReflect extends Bench[Double] with BenchBase {
   import Util._
   val fields = reflectCaseClassFields(p)
 
@@ -129,7 +130,7 @@ object RangeBenchmarkFunctionalWithReflect extends Bench[Double] with BenchBase 
   }
 }
 
-object RangeBenchmarkNestedObjectMapManual extends Bench[Double] with BenchBase {
+object BenchmarkNestedObjectMapManual extends Bench[Double] with BenchBase {
   case class Name(first: String, last: String)
   case class Person(name: Name, age: Int)
   val p = Person(Name("Joe", "Bloggs"), 123)
@@ -147,7 +148,7 @@ object RangeBenchmarkNestedObjectMapManual extends Bench[Double] with BenchBase 
 }
 
 
-object RangeBenchmarkNestedObjectMap extends Bench[Double] with BenchBase {
+object BenchmarkNestedObjectMap extends Bench[Double] with BenchBase {
   case class Name(first: String, last: String)
   case class Person(name: Name, age: Int)
   val p = Person(Name("Joe", "Bloggs"), 123)
@@ -161,7 +162,7 @@ object RangeBenchmarkNestedObjectMap extends Bench[Double] with BenchBase {
 }
 
 
-object RangeBenchmarkDerived extends Bench[Double] with BenchBase {
+object BenchmarkDerived extends Bench[Double] with BenchBase {
   import Derived._
   import WriteToMapOps._
   case class Person(firstName: String, lastName: String, age: Int) derives WriteToMap
@@ -174,7 +175,7 @@ object RangeBenchmarkDerived extends Bench[Double] with BenchBase {
   } // 0.000103 ms
 }
 
-object RangeBenchmarkDerivedLong extends Bench[Double] with BenchBase {
+object BenchmarkDerivedLong extends Bench[Double] with BenchBase {
   import Derived._
   import WriteToMapOps._
 
@@ -191,7 +192,7 @@ object RangeBenchmarkDerivedLong extends Bench[Double] with BenchBase {
   } // 0.000104 ms
 }
 
-object RangeBenchmarkMirrorSummon extends Bench[Double] with BenchBase {
+object BenchmarkMirrorSummon extends Bench[Double] with BenchBase {
   import DerivedMirrorSummon._
   import WriteToMapOps._
 
@@ -207,7 +208,7 @@ object RangeBenchmarkMirrorSummon extends Bench[Double] with BenchBase {
   } // 
 }
 
-object RangeBenchmarkDerivedNaive extends Bench[Double] with BenchBase {
+object BenchmarkDerivedNaive extends Bench[Double] with BenchBase {
   import DerivedNaive._
   import WriteToMapOps._
   case class Person(firstName: String, lastName: String, age: Int) derives WriteToMap
@@ -220,7 +221,7 @@ object RangeBenchmarkDerivedNaive extends Bench[Double] with BenchBase {
   } // 0.000214
 }
 
-object RangeUsingUnionLeafList extends Bench[Double] with BenchBase {
+object UsingUnionLeafList extends Bench[Double] with BenchBase {
   import DerivedFlagControl._
   import WriteToMapOps._
   
@@ -243,7 +244,7 @@ object RangeUsingUnionLeafList extends Bench[Double] with BenchBase {
   } // 
 }
 
-object RangeUsingUnionNodeList extends Bench[Double] with BenchBase {
+object UsingUnionNodeList extends Bench[Double] with BenchBase {
   import DerivedFlagControl._
   import WriteToMapOps._
   
@@ -272,7 +273,7 @@ object RangeUsingUnionNodeList extends Bench[Double] with BenchBase {
 }
 
 
-object RangeUsingUnionLeafListManual extends Bench[Double] with BenchBase {
+object UsingUnionLeafListManual extends Bench[Double] with BenchBase {
   import DerivedFlagControl._
   import WriteToMapOps._
 
@@ -290,7 +291,7 @@ object RangeUsingUnionLeafListManual extends Bench[Double] with BenchBase {
   } // 0.000178 ms
 }
 
-object RangeUsingFlagControlNodeListManual extends Bench[Double] with BenchBase {
+object UsingFlagControlNodeListManual extends Bench[Double] with BenchBase {
   import DerivedFlagControl._
   import WriteToMapOps._
   import UseDerivedFlagControl._
@@ -313,7 +314,7 @@ object RangeUsingFlagControlNodeListManual extends Bench[Double] with BenchBase 
   } // 0.000375ns
 }
 
-object RangeUsingImmutable extends Bench[Double] with BenchBase {
+object UsingImmutable extends Bench[Double] with BenchBase {
   import DerivedImmutable._
   import WriteToMapOps._
   import UseDerivedImmutable._
@@ -329,7 +330,7 @@ object RangeUsingImmutable extends Bench[Double] with BenchBase {
   println(v)
 }
 
-object RangeUsingImmutableListLeaf extends Bench[Double] with BenchBase {
+object UsingImmutableListLeaf extends Bench[Double] with BenchBase {
   import DerivedImmutable._
   import WriteToMapOps._
   import UseDerivedImmutable._
@@ -344,7 +345,7 @@ object RangeUsingImmutableListLeaf extends Bench[Double] with BenchBase {
   } // 0.000090ns
 }
 
-object RangeUsingImmutableListNode extends Bench[Double] with BenchBase {
+object UsingImmutableListNode extends Bench[Double] with BenchBase {
   import DerivedImmutable._
   import WriteToMapOps._
   import UseDerivedImmutable._
@@ -368,7 +369,7 @@ object RangeUsingImmutableListNode extends Bench[Double] with BenchBase {
 }
 
 
-object RangeBenchmarkJustLoadTest {
+object BenchmarkJustLoadTest {
   def main(args: Array[String]): Unit = {
     val l = List[(String, Any)]("firstName" -> "Joe", "lastName" -> "Bloggs", "age" -> 123)
     println( l.foldLeft(Map[String, Any]())((map, pair) => map + pair) )//helloooooooooooooooo
