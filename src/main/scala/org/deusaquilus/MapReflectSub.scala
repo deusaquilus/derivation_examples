@@ -49,6 +49,7 @@ object MainSub {
   
 
   def simpleSub(): Unit = {
+    import ex0_intro._
     case class Name(first: String, last: String)
     case class Person(name: Name, age: Int)
     val p = Person(Name("Joe", "Bloggs"), 123)
@@ -71,6 +72,7 @@ object MainSub {
   }
 
   def userDefSub(): Unit = {
+    import ex0_intro._
     case class Name(first: String, last: String)
     case class ConvertableAge(value: Int) {
       def numDecades = value/10

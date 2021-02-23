@@ -1,9 +1,6 @@
-package org.deusaquilus
+package org.deusaquilus.ex1_genericderive_take1
 
 import scala.collection.mutable
-
-
-
 
 object UseDerivedNaive {
   import DerivedNaive._

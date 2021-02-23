@@ -1,4 +1,4 @@
-package org.deusaquilus
+package org.deusaquilus.ex1_genericderive_take1
 
 import scala.collection.mutable;
 import scala.collection.MapView

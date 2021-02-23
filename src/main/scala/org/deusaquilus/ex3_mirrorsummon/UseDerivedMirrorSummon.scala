@@ -1,4 +1,4 @@
-package org.deusaquilus
+package org.deusaquilus.ex3_mirrorsummon
 
 import scala.collection.mutable
 

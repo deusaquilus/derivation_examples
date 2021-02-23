@@ -33,7 +33,7 @@ trait BenchBase {
 }
 
 object BenchmarkReflectionNoFields extends Bench[Double] with BenchBase {
-  import Util._
+  import ex0_intro.Util._
 
   measure method "Using Reflection No Fields" in {
     //var d: Double = 0
@@ -49,7 +49,7 @@ object BenchmarkReflectionNoFields extends Bench[Double] with BenchBase {
 }
 
 object BenchmarkReflectAndDeref extends Bench[Double] with BenchBase {
-  import Util._
+  import ex0_intro.Util._
 
   measure method "Using Reflection" in {
     using(oneGen).config(opts) in { v =>
@@ -63,7 +63,7 @@ object BenchmarkReflectAndDeref extends Bench[Double] with BenchBase {
 }
 
 object BenchmarkReflectFields extends Bench[Double] with BenchBase {
-  import Util._
+  import ex0_intro.Util._
 
   measure method "Using Reflection" in {
     using(oneGen).config(opts) in { v =>
@@ -73,7 +73,7 @@ object BenchmarkReflectFields extends Bench[Double] with BenchBase {
 }
 
 object BenchmarkC extends Bench[Double] with BenchBase {
-  import Util._
+  import ex0_intro.Util._
   measure method "Manual" in {
     using(oneGen).config(opts) in { v =>
       val map = mutable.Map[String, Any]()
@@ -87,7 +87,8 @@ object BenchmarkC extends Bench[Double] with BenchBase {
 
 
 object BenchmarkMacro extends Bench[Double] with BenchBase {
-  import Util._
+  import ex0_intro.Util._
+  import ex0_intro._
   measure method "Manual" in {
     using(oneGen).config(opts) in { v =>
       val map = mutable.Map[String, Any]()
@@ -97,7 +98,8 @@ object BenchmarkMacro extends Bench[Double] with BenchBase {
 }
 
 object BenchmarkFunMacro extends Bench[Double] with BenchBase {
-  import Util._
+  import ex0_intro.Util._
+  import ex0_intro._
   measure method "Manual" in {
     using(oneGen).config(opts) in { v =>
       PopulateMapFun.populateMap(p) // 0.000103 ms
@@ -107,7 +109,8 @@ object BenchmarkFunMacro extends Bench[Double] with BenchBase {
 
 
 object BenchmarkFunctionalJustLoadMap extends Bench[Double] with BenchBase {
-  import Util._
+  import ex0_intro.Util._
+  import ex0_intro._
   val l = List[(String, Any)]("firstName" -> p.firstName, "lastName" -> p.lastName, "age" -> p.age)
 
   measure method "Manual" in {
@@ -118,7 +121,7 @@ object BenchmarkFunctionalJustLoadMap extends Bench[Double] with BenchBase {
 }
 
 object BenchmarkFunctionalWithReflect extends Bench[Double] with BenchBase {
-  import Util._
+  import ex0_intro.Util._
   val fields = reflectCaseClassFields(p)
 
   measure method "Manual" in {
@@ -149,6 +152,7 @@ object BenchmarkNestedObjectMapManual extends Bench[Double] with BenchBase {
 
 
 object BenchmarkNestedObjectMap extends Bench[Double] with BenchBase {
+  import ex0_intro._
   case class Name(first: String, last: String)
   case class Person(name: Name, age: Int)
   val p = Person(Name("Joe", "Bloggs"), 123)
@@ -163,6 +167,7 @@ object BenchmarkNestedObjectMap extends Bench[Double] with BenchBase {
 
 
 object BenchmarkDerived extends Bench[Double] with BenchBase {
+  import ex2_bothinone._
   import Derived._
   import WriteToMapOps._
   case class Person(firstName: String, lastName: String, age: Int) derives WriteToMap
@@ -176,6 +181,7 @@ object BenchmarkDerived extends Bench[Double] with BenchBase {
 }
 
 object BenchmarkDerivedLong extends Bench[Double] with BenchBase {
+  import ex2_bothinone._
   import Derived._
   import WriteToMapOps._
 
@@ -193,6 +199,7 @@ object BenchmarkDerivedLong extends Bench[Double] with BenchBase {
 }
 
 object BenchmarkMirrorSummon extends Bench[Double] with BenchBase {
+  import ex3_mirrorsummon._
   import DerivedMirrorSummon._
   import WriteToMapOps._
 
@@ -205,10 +212,11 @@ object BenchmarkMirrorSummon extends Bench[Double] with BenchBase {
       
       p.writeToMap
     }
-  } // 
+  } // 0.000127
 }
 
 object BenchmarkDerivedNaive extends Bench[Double] with BenchBase {
+  import ex1_genericderive_take1._
   import DerivedNaive._
   import WriteToMapOps._
   case class Person(firstName: String, lastName: String, age: Int) derives WriteToMap
@@ -222,6 +230,7 @@ object BenchmarkDerivedNaive extends Bench[Double] with BenchBase {
 }
 
 object UsingUnionLeafList extends Bench[Double] with BenchBase {
+  import ex4_flagcontrol._
   import DerivedFlagControl._
   import WriteToMapOps._
   
@@ -241,10 +250,11 @@ object UsingUnionLeafList extends Bench[Double] with BenchBase {
     using(oneGen).config(opts) in { v =>
       p.writeToMap
     }
-  } // 
+  } // 0.000144 ms
 }
 
 object UsingUnionNodeList extends Bench[Double] with BenchBase {
+  import ex4_flagcontrol._
   import DerivedFlagControl._
   import WriteToMapOps._
   
@@ -274,6 +284,7 @@ object UsingUnionNodeList extends Bench[Double] with BenchBase {
 
 
 object UsingUnionLeafListManual extends Bench[Double] with BenchBase {
+  import ex4_flagcontrol._
   import DerivedFlagControl._
   import WriteToMapOps._
 
@@ -292,6 +303,7 @@ object UsingUnionLeafListManual extends Bench[Double] with BenchBase {
 }
 
 object UsingFlagControlNodeListManual extends Bench[Double] with BenchBase {
+  import ex4_flagcontrol._
   import DerivedFlagControl._
   import WriteToMapOps._
   import UseDerivedFlagControl._
@@ -315,6 +327,7 @@ object UsingFlagControlNodeListManual extends Bench[Double] with BenchBase {
 }
 
 object UsingImmutable extends Bench[Double] with BenchBase {
+  import ex5_immutable._
   import DerivedImmutable._
   import WriteToMapOps._
   import UseDerivedImmutable._
@@ -331,6 +344,7 @@ object UsingImmutable extends Bench[Double] with BenchBase {
 }
 
 object UsingImmutableListLeaf extends Bench[Double] with BenchBase {
+  import ex5_immutable._
   import DerivedImmutable._
   import WriteToMapOps._
   import UseDerivedImmutable._
@@ -346,6 +360,7 @@ object UsingImmutableListLeaf extends Bench[Double] with BenchBase {
 }
 
 object UsingImmutableListNode extends Bench[Double] with BenchBase {
+  import ex5_immutable._
   import DerivedImmutable._
   import WriteToMapOps._
   import UseDerivedImmutable._

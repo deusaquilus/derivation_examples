@@ -1,4 +1,4 @@
-package org.deusaquilus
+package org.deusaquilus.ex5_immutable
 
 import scala.collection.MapView
 import scala.collection.mutable;

@@ -1,4 +1,4 @@
-package org.deusaquilus
+package org.deusaquilus.ex6_json
 
 import scala.collection.MapView
 import scala.collection.mutable;

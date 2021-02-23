@@ -1,4 +1,4 @@
-package org.deusaquilus
+package org.deusaquilus.ex4_flagcontrol
 
 import scala.collection.MapView
 import scala.collection.mutable;

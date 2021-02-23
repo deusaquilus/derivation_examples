@@ -1,4 +1,4 @@
-package org.deusaquilus
+package org.deusaquilus.ex0_intro
 
 import scala.quoted._
 import scala.collection.mutable
