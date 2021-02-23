@@ -63,7 +63,7 @@ object DerivedImmutable {
       inline erasedValue[Types] match
         case _: (tpe *: types) =>
           if (element.isInstanceOf[tpe])
-            summonWriter[tpe].writeToMap(element.asInstanceOf[tpe]) //.asInstanceOf[tpe]
+            summonWriter[tpe].writeToMap(element.asInstanceOf[tpe])
           else
             recurseSum[types, T](element)
         case _: EmptyTuple =>
@@ -111,6 +111,6 @@ object DerivedImmutable {
         case _ =>
           // Does not work with sum mirrors
           //throw new IllegalArgumentException(s"No mirror found for ${summonInline[Type[T]]}")
-          throw new IllegalArgumentException(s"No mirror found for") // ${summonInline[Type[T]]}
+          throw new IllegalArgumentException(s"No mirror found") // ${summonInline[Type[T]]}
   }
 }

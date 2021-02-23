@@ -3,12 +3,6 @@ package org.deusaquilus
 import scala.collection.mutable
 
 // Works
-// sealed trait Name
-// object Name {
-//   case class Simple(first: String, last: String) extends Name
-// }
-
-// Works
 enum Name:
   case Simple(first: String, last: String) extends Name
   case Title(first: String, middle: String, last: String) extends Name
@@ -63,6 +57,8 @@ object UseDerivedImmutable {
     //   case Title(first: String, middle: String, last: String) extends Name
 
     case class Person(name: Name, age: Int)
+    
+
     val p1 = Person(Name.Simple("Joe", "Bloggs"), 123)
     //val n = Name.Simple("Joe", "Bloggs")
 
